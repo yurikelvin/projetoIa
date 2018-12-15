@@ -1,0 +1,19 @@
+---
+title: "Análise - Modelos de Predição"
+author: "Grupo"
+date: "15 de dezembro de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(caret)
+library(here)
+```
+
+### Lendo os dados
+```{r, warning=FALSE, message=FALSE}
+treino <- read.csv(here("dataframes/true_car_listings_data_training.csv"), encoding = "latin1")
+validacao <- read.csv(here("dataframes/true_car_listings_data_test.csv"), encoding = "latin1")
+```
