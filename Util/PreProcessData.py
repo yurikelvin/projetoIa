@@ -17,7 +17,8 @@ print 'Read completed...'
 print 'Deleting the Vin unused column'
 
 dfWithoutVin = df.drop('Vin', 1)
-dfWithoutVin = dfWithoutVin.sample(85213)
+print len(dfWithoutVin.index)
+dfWithoutVin = dfWithoutVin.sample(10000)
 
 sizeOfDf = len(dfWithoutVin.index)
 
