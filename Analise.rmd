@@ -86,3 +86,34 @@ model.knn$results %>%
   filter(RMSE == min(RMSE)) %>% 
   select(RMSE, Rsquared)
 ```
+
+### Rede Neural
+```{r}
+grid <- expand.grid(.decay = c(0.5, 0.1), .size = c(5, 6, 7))
+
+numFolds(method = 'cv', number = 10, classProbs = TRUE, verboseIter = TRUE, summaryFunction = twoClassSummary, preProcOptions = list(thresh = 0.75, ICAcomp = 3, k = 5))
+
+model.neuralNetwork <- train(Price ~., data = treino,
+    method = "nnet", maxit = 1000, preProcess = preProcValues, trConrol = numFolds,tuneGrid = grid, trace = F, linout = 1)
+```
+
+#### Predição
+```{r}
+model.neuralNetwork
+
+pred.neuralNetwork <- predict(model.neuralNetwork, teste)
+
+df.pred.neuralNetwork <- data.frame(predicao = pred.neuralNetwork, observado = teste$Price)
+
+df.pred.neuralNetwork %>% 
+  ggplot(aes(x = predicao,
+             y = observado - predicao,
+             colour = observado - predicao)) +
+  geom_jitter()
+
+model.neuralNetwork$results %>% 
+  filter(RMSE == min(RMSE)) %>% 
+  select(RMSE, Rsquared)
+```
+
+
