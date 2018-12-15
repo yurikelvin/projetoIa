@@ -15,46 +15,87 @@ library(here)
 ### Lendo os dados
 ```{r, warning=FALSE, message=FALSE}
 treino <- read.csv(here("dataframes/true_car_listings_data_training.csv"), encoding = "latin1")
-validacao <- read.csv(here("dataframes/true_car_listings_data_test.csv"), encoding = "latin1")
+teste <- read.csv(here("dataframes/true_car_listings_data_test.csv"), encoding = "latin1")
 ```
 
 
 ### Amostra do treino
 ```{r}
 set.seed(333)
-amostra <- treino[sample(nrow(treino), 10000), ]
-amostra$Year <- as.factor((amostra$Year))
-amostra$City <- as.factor(amostra$City)
-amostra$State <- as.factor(amostra$State)
-amostra$Model <- as.factor(amostra$Model)
-amostra$Make <- as.factor(amostra$Make)
+amostra.treino <- treino[sample(nrow(treino), 10000), ]
+amostra.treino$Year <- as.factor((amostra.treino$Year))
+amostra.treino$City <- as.factor(amostra.treino$City)
+amostra.treino$State <- as.factor(amostra.treino$State)
+amostra.treino$Model <- as.factor(amostra.treino$Model)
+amostra.treino$Make <- as.factor(amostra.treino$Make)
+
+amostra.teste <- teste[sample(nrow(teste), 10000), ]
 ```
 
 ```{r}
 fitControl <- trainControl(method = "repeatedcv",
                    number = 5,
-                   repeats = 5,
+                   repeats = 10,
                    verboseIter = TRUE)
 
 preProcValues <- c("scale", "center", "nzv")
 ```
 
+### Modelo Lasso
 ```{r}
 model.lasso <- train(Price ~ .,
-                    data = amostra,
+                    data = amostra.treino,
                     trControl = fitControl,
                     method = "lasso",
                     preProcess = preProcValues,
                     tuneLength = 15)
 ```
 
+#### Variáveis Importantes e Predição
+```{r}
+model.lasso
+ggplot(varImp(model.lasso))
 
+pred.lasso <- predict(model.lasso)
+
+df.pred.lasso <- data.frame(predicao = pred.lasso, observado = amostra.teste$Price)
+
+df.pred.lasso %>% 
+  ggplot(aes(x = predicao,
+             y = observado - predicao,
+             colour = observado - predicao)) +
+  geom_jitter()
+
+model.lasso$results %>% 
+  filter(RMSE == min(RMSE)) %>% 
+  select(RMSE, Rsquared)
+```
+
+### Modelo K-NN
 ```{r}
 model.knn <- train(Price ~.,
-           data = amostra,
+           data = amostra.treino,
            trControl = controle,
-           preProcess = preProcessamento,
+           preProcess = preProcValues,
            method = "knn",
            tuneLength = 15)
 ```
 
+#### Predição
+```{r}
+model.knn
+
+pred.knn <- predict(model.knn)
+
+df.pred.knn <- data.frame(predicao = pred.knn, observado = amostra.teste$Price)
+
+df.pred.knn %>% 
+  ggplot(aes(x = predicao,
+             y = observado - predicao,
+             colour = observado - predicao)) +
+  geom_jitter()
+
+model.knn$results %>% 
+  filter(RMSE == min(RMSE)) %>% 
+  select(RMSE, Rsquared)
+```
