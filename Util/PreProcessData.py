@@ -17,6 +17,8 @@ print 'Read completed...'
 print 'Deleting the Vin unused column'
 
 dfWithoutVin = df.drop('Vin', 1)
+dfWithoutVin = dfWithoutVin.sample(85213)
+
 sizeOfDf = len(dfWithoutVin.index)
 
 sizeOfDfTraining = int(round(PERCENT_OF_DATA_TRAINING * sizeOfDf, 0))
@@ -31,8 +33,8 @@ print "Indexes of data training completed."
 
 indexesDataTest = diff(indexesWholeData, indexesDataTraining) # The indexes of Data Test represents 20% of the whole of data
 
-dataTraining = dfWithoutVin.drop(indexesDataTraining)
-dataTest = dfWithoutVin.drop(indexesDataTest)
+dataTraining = dfWithoutVin.drop(indexesDataTest)
+dataTest = dfWithoutVin.drop(indexesDataTraining)
 
 print 'Sucessful extract the data training and data test from whole data'
 
