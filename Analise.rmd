@@ -17,3 +17,44 @@ library(here)
 treino <- read.csv(here("dataframes/true_car_listings_data_training.csv"), encoding = "latin1")
 validacao <- read.csv(here("dataframes/true_car_listings_data_test.csv"), encoding = "latin1")
 ```
+
+
+### Amostra do treino
+```{r}
+set.seed(333)
+amostra <- treino[sample(nrow(treino), 10000), ]
+amostra$Year <- as.factor((amostra$Year))
+amostra$City <- as.factor(amostra$City)
+amostra$State <- as.factor(amostra$State)
+amostra$Model <- as.factor(amostra$Model)
+amostra$Make <- as.factor(amostra$Make)
+```
+
+```{r}
+fitControl <- trainControl(method = "repeatedcv",
+                   number = 5,
+                   repeats = 5,
+                   verboseIter = TRUE)
+
+preProcValues <- c("scale", "center", "nzv")
+```
+
+```{r}
+model.lasso <- train(Price ~ .,
+                    data = amostra,
+                    trControl = fitControl,
+                    method = "lasso",
+                    preProcess = preProcValues,
+                    tuneLength = 15)
+```
+
+
+```{r}
+model.knn <- train(Price ~.,
+           data = amostra,
+           trControl = controle,
+           preProcess = preProcessamento,
+           method = "knn",
+           tuneLength = 15)
+```
+
