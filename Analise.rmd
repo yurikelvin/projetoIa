@@ -105,15 +105,41 @@ pred.neuralNetwork <- predict(model.neuralNetwork, teste)
 
 df.pred.neuralNetwork <- data.frame(predicao = pred.neuralNetwork, observado = teste$Price)
 
-df.pred.neuralNetwork %>% 
+df.pred.neuralNetwork %>%
   ggplot(aes(x = predicao,
              y = observado - predicao,
              colour = observado - predicao)) +
   geom_jitter()
 
-model.neuralNetwork$results %>% 
-  filter(RMSE == min(RMSE)) %>% 
+model.neuralNetwork$results %>%
+  filter(RMSE == min(RMSE)) %>%
   select(RMSE, Rsquared)
 ```
 
+```{r}
+plot(varImp(model.knn))
+```
 
+```{r}
+plot(varImp(model.lasso))
+```
+
+```{r}
+plot(varImp(model.neuralNetwork))
+```
+
+```{r}
+summary(resamples(list(LM = model.lasso, NEURAL = model.neuralNetwork, KNN = model.knn)))
+```
+
+```{r}
+plot(model.lasso)
+```
+
+```{r}
+plot(model.knn)
+```
+
+```{r}
+plot(model.neuralNetwork)
+```
