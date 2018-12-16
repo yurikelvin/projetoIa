@@ -17,8 +17,10 @@ print 'Read completed...'
 print 'Deleting the Vin unused column'
 
 dfWithoutVin = df.drop('Vin', 1)
-print len(dfWithoutVin.index)
-dfWithoutVin = dfWithoutVin.sample(10000)
+dfWithoutVin = dfWithoutVin.sample(5000)
+
+# Create the dummy variable
+dfWithoutVin = pd.get_dummies(dfWithoutVin)
 
 sizeOfDf = len(dfWithoutVin.index)
 
@@ -43,4 +45,3 @@ print 'Generating the output csv'
 
 dataTraining.to_csv('../dataframes/true_car_listings_data_training.csv')
 dataTest.to_csv('../dataframes/true_car_listings_data_test.csv')
-

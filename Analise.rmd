@@ -43,18 +43,18 @@ model.lasso <- train(Price ~ .,
 model.lasso
 ggplot(varImp(model.lasso))
 
-pred.lasso <- predict(model.lasso)
+pred.lasso <- predict(model.lasso, teste)
 
 df.pred.lasso <- data.frame(predicao = pred.lasso, observado = teste$Price)
 
-df.pred.lasso %>% 
+df.pred.lasso %>%
   ggplot(aes(x = predicao,
              y = observado - predicao,
              colour = observado - predicao)) +
   geom_jitter()
 
-model.lasso$results %>% 
-  filter(RMSE == min(RMSE)) %>% 
+model.lasso$results %>%
+  filter(RMSE == min(RMSE)) %>%
   select(RMSE, Rsquared)
 ```
 
@@ -72,18 +72,18 @@ model.knn <- train(Price ~.,
 ```{r}
 model.knn
 
-pred.knn <- predict(model.knn)
+pred.knn <- predict(model.knn, teste)
 
 df.pred.knn <- data.frame(predicao = pred.knn, observado = teste$Price)
 
-df.pred.knn %>% 
+df.pred.knn %>%
   ggplot(aes(x = predicao,
              y = observado - predicao,
              colour = observado - predicao)) +
   geom_jitter()
 
-model.knn$results %>% 
-  filter(RMSE == min(RMSE)) %>% 
+model.knn$results %>%
+  filter(RMSE == min(RMSE)) %>%
   select(RMSE, Rsquared)
 ```
 
