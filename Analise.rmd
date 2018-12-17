@@ -91,10 +91,13 @@ model.knn$results %>%
 ```{r}
 grid <- expand.grid(.decay = c(0.5, 0.1), .size = c(5, 6, 7))
 
-numFolds <- trainControl(method = 'cv', number = 10, classProbs = TRUE, verboseIter = TRUE, summaryFunction = twoClassSummary, preProcOptions = list(thresh = 0.75, ICAcomp = 3, k = 5))
+numFolds <- trainControl(method = "repeatedcv",
+                   number = 5,
+                   repeats = 10,
+                   verboseIter = TRUE, preProcOptions = list(thresh = 0.75, ICAcomp = 3, k = 5))
 
 model.neuralNetwork <- train(Price ~., data = treino,
-    method = "nnet", maxit = 1000, preProcess = preProcValues, trConrol = numFolds,tuneGrid = grid, trace = F, linout = 1)
+    method = "nnet", maxit = 1000, preProcess = preProcValues, trControl = numFolds,tuneGrid = grid, trace = F, linout = 1)
 ```
 
 #### Predição
