@@ -111,6 +111,8 @@ df.pred.neuralNetwork %>%
              colour = observado - predicao)) +
   geom_jitter()
 
+
+
 model.neuralNetwork$results %>%
   filter(RMSE == min(RMSE)) %>%
   select(RMSE, Rsquared)
@@ -142,4 +144,49 @@ plot(model.knn)
 
 ```{r}
 plot(model.neuralNetwork)
+```
+
+```{r}
+model.neuralNetworkResults <- data.frame(teste$Price, pred.neuralNetwork, (pred.neuralNetwork - teste$price)^2)
+
+
+
+rmse.knn <- sqrt(mean((pred.knn - teste$Price)^2))
+rmse.knn
+```
+
+
+### Modelo K-NN
+```{r}
+
+treinoAjustado <- treino %>% select(Price, Mileage, Year)
+testeAjustado <- teste %>% select(Price, Mileage, Year)
+
+
+model.knnAdjusted <- train(Price ~ Mileage + Year,
+           data = treinoAjustado,
+           trControl = controle,
+           preProcess = preProcValues,
+           method = "knn",
+           tuneLength = 15)
+```
+
+
+#### Predição KNN Melhorado
+```{r}
+model.knnAdjusted
+
+pred.knnAdjusted <- predict(model.knnAdjusted, testeAjustado)
+
+df.pred.knnAdjusted <- data.frame(predicao = pred.knnAdjusted, observado = testeAjustado$Price)
+
+df.pred.knnAdjusted %>%
+  ggplot(aes(x = predicao,
+             y = observado - predicao,
+             colour = observado - predicao)) +
+  geom_jitter()
+
+model.knnAdjusted$results %>%
+  filter(RMSE == min(RMSE)) %>%
+  select(RMSE, Rsquared)
 ```
